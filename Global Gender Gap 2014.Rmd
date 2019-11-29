@@ -1,0 +1,71 @@
+
+```{r}
+library(htmltab)
+linkPage ="https://es.wikipedia.org/wiki/Global_Gender_Gap_Report" 
+linkPath = '//*[@id="mw-content-text"]/div/table'
+
+#Ahora traemos:
+GGG = htmltab(doc = linkPage, which =linkPath) 
+```
+
+```{r}
+head(GGG)
+tail(GGG)
+names(GGG)
+str(GGG)
+```
+
+```{r}
+# limpieza
+library(stringr)
+library(magrittr)
+names(GGG)=str_split(names(GGG),">>",simplify = T)[,1]%>%gsub('\\s','',.)
+```
+```{r}
+names(GGG)
+```
+```{r}
+names(GGG)[1] = "Pais"
+```
+```{r}
+names(GGG)
+```
+Quitamos:
+```{r}
+GGG = GGG[,-c(3,4,5,6,7,8,9,10)]
+```
+```{r}
+GGG = GGG[,-c(2)]
+```
+
+```{r}
+names(GGG) [2] = "Indice GGG"
+```
+
+```{r}
+GGG$`Indice GGG`= as.numeric(GGG$`Indice GGG`)
+```
+```{r}
+str(GGG)
+```
+```{r}
+GGG = na.omit(GGG)
+```
+
+
+```{r}
+GGG
+```
+
+Agregamos ISO3
+```{r}
+GGG$"ISO" = c("ALB", "DZA", "AGO", "ARG", "ARM", "AUS", "AUT", "AZE", "BHS", "BHR", "BGD", "BRB", "BEL", "BLZ", "BTN", "BOL", "BWA", "BRA", "BRN", "BGR", "BFA", "BDI", "KHM", "CAN", "CPV", "TCD", "CHL", "CHN", "COL", "CRI", "CIV", "HRV", "CUB", "CYP", "CZE", "DNK", "DOM", "ECU", "EGY", "SLV", "EST", "ETH", "FJI", "FIN", "FRA", "GEO", "DEU", "GHA", "GRC", "GTM", "GUY", "HND", "HUN", "ISL", "IND", "IDN", "IRN", "IRL", "ISR", "ITA", "JAM", "JPN", "JOR", "KAZ", "KEN", "KOR", "KWT", "KGZ", "LAO", "LVA", "LBN", "LSO", "LTU", "LUX", "MKD", "MDG", "MWI", "MYS", "MDV", "MLI", "MLT", "MRT", "MUS", "MEX", "MDA", "MNG", "MAR", "MOZ", "NAM", "NPL", "NLD", "NZL", "NIC", "NGA", "NOR", "OMN", "PAK", "PAN", "PRY", "PER", "PHL", "POL", "PRT", "QAT", "ROU", "RUS", "SAU", "SEN", "SRB", "SGP", "SVK", "SVN", "ZAF", "ESP", "LKA", "SUR", "SWE", "CHE", "SYR", "TJK", "TZN", "THA", "TTO", "TUN", "TUR", "UGA", "UKR", "ARE", "GBR", "USA", "URY", "VEN", "VNM", "YEM", "ZMB", "ZWE")
+```
+Vemos:
+```{r}
+GGG
+```
+
+
+
+
