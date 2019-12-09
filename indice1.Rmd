@@ -1,0 +1,260 @@
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhLhR6B_wu6M6ssIGm9fGkuitKE1MEoTSRAFy6tghDyTWSHzfj7SLw_vcrQLF2gA/pub?gid=1077831480&single=true&output=csv"
+dataeco=read.csv(lkCSV)
+```
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTOgp0QD-YOBmRScKhNMYeLzYeLH5jbnFXEHLevscRF3umr_b0edtYgBwwlydAlEw/pub?gid=1044103274&single=true&output=csv"
+dataurb=read.csv(lkCSV)
+```
+
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8uUrENpRsfv0smfho7WX4SdcZs10SJC_M07RnpZ6NUhvfMsZe3qmLYZLTGlWcwQ/pub?gid=747425374&single=true&output=csv"
+dataserv=read.csv(lkCSV)
+```
+
+```{r}
+dataeco <- na.omit(dataeco)
+dataserv <- na.omit(dataserv)
+dataurb <- na.omit(dataurb)
+```
+
+```{r}
+dataeco$Series.Name=NULL
+dataeco$Series.Code=NULL
+dataeco$Country.Name=NULL
+dataserv$Series.Name=NULL
+dataserv$Series.Code=NULL
+dataserv$Country.Name=NULL
+dataurb$Series.Name=NULL
+dataurb$Series.Code=NULL
+dataurb$Country.Name=NULL
+```
+
+```{r}
+names (dataeco)[2] = "ECO16"
+names (dataserv)[2] = "SER16"
+names (dataurb)[2] = "URB16"
+```
+
+```{r}
+data1=merge(dataeco, dataserv, by.x = "Country.Code", by.y = "Country.Code")
+IND1=merge(data1, dataurb, by.x = "Country.Code", by.y =  "Country.Code")
+```
+
+```{r}
+str(IND1)
+```
+```{r}
+Correla=IND1[,-c(1)]
+library(polycor)
+CorCor=polycor::hetcor(Correla)$correlations
+```
+
+```{r}
+library(ggcorrplot)
+
+ggcorrplot(CorCor)
+```
+
+```{r}
+ggcorrplot(CorCor,
+          p.mat = cor_pmat(CorCor),
+          insig = "blank")
+```
+
+```{r}
+library(psych)
+psych::KMO(CorCor) 
+```
+
+```{r}
+cortest.bartlett(CorCor,n=nrow(Correla))$p.value>0.05
+```
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(CorCor)
+```
+
+```{r}
+fa.parallel(Correla,fm = 'ML', fa = 'fa')
+```
+
+```{r}
+library(GPArotation)
+luna <- fa(Correla,nfactors = 1,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+
+```{r}
+print(luna$loadings)
+```
+
+```{r}
+fa.diagram(luna)
+```
+
+```{r}
+luna$crms
+```
+
+```{r}
+luna$RMSEA
+```
+
+```{r}
+luna$TLI
+```
+
+```{r}
+sort(luna$communality)
+```
+```{r}
+str(IND1)
+```
+
+
+```{r}
+IND01=IND1[,2:4]/100  
+```
+
+
+```{r}
+IND1$INDECO[IND01$ECO16<0.200]="1"
+IND1$INDECO[IND01$ECO16>=0.200 & IND01$ECO16<0.400]="2"
+IND1$INDECO[IND01$ECO16>=0.400 & IND01$ECO16<0.600]="3"
+IND1$INDECO[IND01$ECO16>=0.600 & IND01$ECO16<0.800]="4"
+IND1$INDECO[IND01$ECO16>=0.800]="5"
+```
+
+```{r}
+IND1$INDSER[IND01$SER16<0.200]="1"
+IND1$INDSER[IND01$SER16>=0.200 & IND01$SER16<0.400]="2"
+IND1$INDSER[IND01$SER16>=0.400 & IND01$SER16<0.600]="3"
+IND1$INDSER[IND01$SER16>=0.600 & IND01$SER16<0.800]="4"
+IND1$INDSER[IND01$SER16>=0.800]="5"
+```
+
+```{r}
+IND1$INDURB[IND01$URB16<0.200]="1"
+IND1$INDURB[IND01$URB16>=0.200 & IND01$URB16<0.400]="2"
+IND1$INDURB[IND01$URB16>=0.400 & IND01$URB16<0.600]="3"
+IND1$INDURB[IND01$URB16>=0.600 & IND01$URB16<0.800]="4"
+IND1$INDURB[IND01$URB16>=0.800]="5"
+```
+
+```{r}
+str(IND1)
+```
+```{r}
+IND1[,5:7]=lapply(IND1[,5:7], as.numeric)
+```
+```{r}
+str(IND1)
+```
+
+
+```{r}
+IND1$sumaparcial = rowSums (IND1[ , 5:7])
+```
+
+```{r}
+IND1[,9]=IND1[,8]/3 #PARA EL ANALISIS DE NUESTRO MODELO SE USARA ESTE INDICE QUE INCLUYE SOLO INDECO INDURB INDSERV, PERO IGUAL SE SEGUIRA CREANDO EL INDICE PARA QUE SE USE COMO UN Año BASE PARA FURUTAS INVESTIGACIONES.
+```
+
+```{r}
+MEPO=data.frame(IND1$Country.Code, IND1$V9)
+```
+
+```{r}
+names(MEPO)[1]= "Country.Code"
+names(MEPO)[2]= "INDMEP" #AL FINAL SE HIZO EL INDICE PARA USARLO COMO AñO BASE
+```
+
+
+
+```{r}
+#DENTRO DEL INDICE, SE PRUEBA REEMPLAZAR LA VARIABLE ECO16 POR LA VARIABLE INFR16
+
+```
+
+
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vRiPm7VerQo61k01f1Lg1tsXNQrXFL7pqTaIe-plk9zc8aA7HoTqnDfKvQugpgFqQ/pub?gid=2071508530&single=true&output=csv" #AUMENTANDO UNA VARIABLE (NIVEL DE INFRAESTRUCTURA)
+datalog=read.csv(lkCSV)
+```
+
+```{r}
+datalog= na.omit(datalog)
+```
+
+```{r}
+datalog$Series.Name=NULL
+datalog$Series.Code=NULL
+datalog$Country.Name=NULL
+```
+
+```{r}
+names(datalog)[2]="INDINFRA"
+```
+
+```{r}
+IND3=merge(datalog , IND1, by.x = "Country.Code", by.y = "Country.Code")
+```
+
+```{r}
+themedo=IND3[,-c(1,3,4,5,6,9,10)] 
+
+library(polycor)
+corcor2=polycor::hetcor(themedo)$correlations
+```
+
+```{r}
+library(ggcorrplot)
+ggcorrplot(corcor2)
+```
+
+```{r}
+ggcorrplot(corcor2,
+          p.mat = cor_pmat(corcor2),
+          insig = "blank")
+```
+```{r}
+library(psych)
+psych::KMO(corcor2) 
+```
+
+```{r}
+cortest.bartlett(corcor2,n=nrow(themedo))$p.value>0.05
+```
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corcor2)
+```
+
+```{r}
+fa.parallel(themedo,fm = 'ML', fa = 'fa')
+```
+
+```{r}
+library(GPArotation)
+imagen1 <- fa(themedo,nfactors = 1,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+
+```{r}
+print(imagen1$loadings)
+```
+
+```{r}
+fa.diagram(imagen1)
+```
+
+```{r}
+VIOL1=data.frame(IND3$Country.Code, IND3$INDINFRA, IND3$INDSER, IND3$INDURB)
+```
+
+
+
+
