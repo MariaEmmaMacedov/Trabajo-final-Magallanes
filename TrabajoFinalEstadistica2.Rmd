@@ -1,0 +1,916 @@
+---
+title: "Trabajo de Investigacion"
+author: "Celia Ruiz, Martin Heredia, Maria Emma Macedo, Luis Torres"
+date: "5/12/2019"
+output: html_document
+---
+
+##Indice de Competitividad Global ¿Variables sociales pueden explicar la competitividad de los países?
+
+
+#Traer las datas al R 
+
+####VARIABLE DEPENDIENTE
+
+##GLOBAL COMPETITIVENESS INDEX
+
+```{r}
+library(htmltab)
+link="https://github.com/MariaEmmaMacedov/Trabajo-final-Magallanes/raw/master/Global%20Competitiveness%20Report%20-%20Wikipedia.html"
+GCR=htmltab(doc=link, which='//*[@id="mw-content-text"]/div/table[2]/tbody', encoding="UTF-8")
+```
+
+###VARIABLES INDEPENDIENTES
+
+##UHC-UNIVERSAL HEALTH COVERAGE (COBERTURA DE SALUD)
+
+```{r}
+UHC=read.csv("https://github.com/MariaEmmaMacedov/Trabajo-final-Magallanes/raw/master/UHC.xlsx%20-%20Data.csv")
+```
+
+##GGG-GLOBAL GENDER GAP (BRECHA DE GENERO)
+
+```{r}
+GGG=read.csv("https://github.com/MariaEmmaMacedov/Trabajo-final-Magallanes/raw/master/GGG20152.xlsx%20-%20Hoja1.csv")
+```
+
+##IDH-INDICE DE DESARROLLO HUMANO
+
+```{r}
+library(htmltab)
+link= "https://github.com/MariaEmmaMacedov/ClasesEstadistica/raw/master/_%20Human%20Development%20Reports.html" 
+idh = htmltab(doc = link, which ='/html/body/div[2]/div/section/div/div/div/div/div/table/tbody',encoding = "UTF-8")
+```
+
+
+
+##EDUCACION INTERMEDIA
+
+```{r}
+library(rio)
+EDUINTER="https://github.com/MartinHeredia16/Data-clases/blob/master/Educacion%20Intermedia.xls?raw=true"
+DataEduInter=import(EDUINTER)
+```
+
+##TIC'S- TECNOLOGIA DE LA INFORMACION Y LA COMUNICACION
+
+```{r}
+library(rio)
+Tics15="https://github.com/MartinHeredia16/Data-clases/blob/master/TICs.xlsx?raw=true"
+DataTICS2015=import(Tics15)
+```
+
+##eco-dataeco
+
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhLhR6B_wu6M6ssIGm9fGkuitKE1MEoTSRAFy6tghDyTWSHzfj7SLw_vcrQLF2gA/pub?gid=1077831480&single=true&output=csv"
+dataeco=read.csv(lkCSV)
+```
+
+##serv-dataserv
+
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8uUrENpRsfv0smfho7WX4SdcZs10SJC_M07RnpZ6NUhvfMsZe3qmLYZLTGlWcwQ/pub?gid=747425374&single=true&output=csv"
+dataurb=read.csv(lkCSV)
+```
+
+##urb-dataurb
+
+```{r}
+lkCSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTOgp0QD-YOBmRScKhNMYeLzYeLH5jbnFXEHLevscRF3umr_b0edtYgBwwlydAlEw/pub?gid=1044103274&single=true&output=csv"
+dataserv=read.csv(lkCSV)
+```
+
+##LIMPIEZA DE DATOS
+
+#Limpieza de Indice de competitividad global-GCR
+
+```{r}
+GCR$Rank=NULL
+GCR$Country=trimws(GCR$Country,whitespace = "[\\h\\v]")
+names(GCR)=c("Pais","Score GCR")
+GCR$Pais=as.character(GCR$Pais)
+GCR$`Score GCR`=as.numeric(GCR$`Score GCR`)
+GCR$ISO=c("SGP","USA","HKG","NLD","CHE","JPN","DEU","SWE","GBR","DNK","FIN","TWN","KOR","CAN","FRA","AUS","NOR","LUX","NZL","ISR","AUT","BEL","ESP","IRL","ARE","ISL","MYS","CHN","QAT","ITA","EST","CZE","CHL","PRT","SVN","SAU","POL","MLT","LTU","THA","LVA","SVK","RUS","CYP","BHR","KWT","HUN","MEX","BGR","IDN","ROU","MUS","OMN","URY","KAZ","BRN","COL","AZE","GRC","ZAF","TUR","CRI","HRV","PHL","PER","PAN","VNM","IND","ARM","JOR","BRA","SRB","MNE","GEO","MAR","SYC","BRB","DOM","TTO","JAM","ALB","MKD","ARG","LKA","UKR","MDA","TUN","LBN","DZA","ECU","BWA","BIH","EGY","NAM","KEN","KGZ","PRY","GTM","IRN","RWA","HND","MNG","SLV","TJK","BGD","KHM","BOL","NEP","NIC","PAK","GHA","CPV","LAO","SEN","UGA","NGA","TZA","CIV","GAB","ZMB","SWZ","GIN","CMR","GMB","BEN","ETH","ZWE","MWI","MLI","BFA","LSO","MDG","VEN","MRT","BDI","AGO","MOZ","HTI","COD","YEM","TCD")
+```
+
+#Limpieza de UHC
+
+```{r}
+UHC$Series.Name=NULL
+UHC$Series.Code=NULL
+UHC$Country.Code=NULL
+UHC$X1990..YR1990.=NULL
+UHC$X2000..YR2000.=NULL
+UHC$X2006..YR2006.=NULL
+UHC$X2007..YR2007.=NULL
+UHC$X2008..YR2008.=NULL
+UHC$X2009..YR2009.=NULL
+UHC$X2010..YR2010.=NULL
+UHC$X2011..YR2011.=NULL
+UHC$X2012..YR2012.=NULL
+UHC$X2013..YR2013.=NULL
+UHC$X2014..YR2014.=NULL
+names(UHC)=c("Pais", "Indice UHC")
+UHC$`Indice UHC`=gsub("\\..","",UHC$`Indice UHC`)
+UHC$`Indice UHC`=as.numeric(UHC$`Indice UHC`)
+UHC$Pais=as.character(UHC$Pais)
+library(dplyr)
+UHC[3,2]=76
+UHC[7,2]=75
+UHC[14,2]=72
+UHC[15,2]=72
+UHC[17,2]=79
+UHC[20,2]=61
+UHC[23,2]=59
+UHC[29,2]=80
+UHC[38,2]=33
+UHC[44,2]=47
+UHC[46,2]=38
+UHC[50,2]=78
+UHC[60,2]=77
+UHC[61,2]=45
+UHC[62,2]=38
+UHC[69,2]=80
+UHC[72,2]=46
+UHC[79,2]=72
+UHC[84,2]=68
+UHC[85,2]=47
+UHC[93,2]=63
+UHC[103,2]=40
+UHC[107,2]=77
+UHC[114,2]=63
+UHC[129,2]=60
+UHC[136,2]=60
+UHC[137,2]=59
+UHC[140,2]=80
+UHC[142,2]=80
+UHC[153,2]=41
+UHC[160,2]=77
+UHC[164,2]=56
+UHC[167,2]=68
+UHC[170,2]=68
+UHC[172,2]=80
+UHC[176,2]=50
+UHC[177,2]=22
+UHC[179,2]=30
+UHC[183,2]=69
+UHC[185,2]=65
+UHC[186,2]=43
+UHC[187,2]=68
+UHC[190,2]=60
+UHC[196,2]=62
+UHC[197,2]=75
+UHC[200,2]=67
+UHC[205,2]=63
+UHC[209,2]=72
+UHC[210,2]=56
+UHC[211,2]=73
+UHC[217,2]=55
+UHC=UHC[-c(218:250),]
+UHC=na.omit(UHC)
+UHC$ISO=c("AFG","ALB","DZA","AGO","ATG","ARG","ARM","AUS","AUT","AZE","BHS","BHR","BGD","BRB","BLR","BEL","BLZ","BEN","BTN","BOL","BIH","BWA","BRA","BRN","BGR","BFA","BDI","CPV","KHM","CMR","CAN","CAF","TCD","CHL","CHN","COL","COM","COD","COG","CRI","CIV","HRV","CUB","CYP","CZE","DNK","DJI","DOM","ECU","EGY","SLV","GNQ","ERI","EST","SWZ","ETH","FJI","FIN","FRA","GAB","GMB","GEO","DEU","GHA","GRC","GRD","GTM","GIN","GUY","HTI","HND","HUN","ISL","IND","IDN","IRN","IRQ","IRL","	ISR","ITA","JAM","JPN","JOR","KAZ","KEN","KIR","KOR","KWT","KGZ","LAO","LVA","LBN","LSO","LBR","LBY","LTU","LUX","MDG","MWI","MYS","MDV","MLI","MLT","MRT","MUS","MEX","FSM","MDA","MNG","MNE","MAR","MOZ","MMR","NAM","NPL","NLD","NZL","NIC","NER","NER","MKD","NOR","OMN","PAK","PAN","PNG","PRY","PER","PHL","POL","PRT","QAT","ROU","RUS","RWA","WSM","STP","SAU","SEN","SRB","SYC","SLE","SGP","SVK","SVN","SLB","SOM","ZAF","SSD","ESP","LKA","LCA","VCT","SDN","SUR","SWE","CHE","SYR","TJK","TZA","THA","TLS","TGO","TON","TTO","TUN","TUR","TKM","UGA","UKR","ARE","GBR","USA","URY","UZB","VUT","VEN","VNM","YEM","ZMB","ZWE")
+```
+
+
+#Limpieza de Global gender gap-GGG
+
+```{r}
+library(tidyr)
+##cambiamos nombres de variables 
+names(GGG)=c("Pais","index")
+GGG=separate(GGG,index,into=c("delete1","globalindex","delete2","participacioneconomicayoportunidades","delete3","educacion","delete4","saludysupervivencia","delete5","empoderamientopolitico")," ")
+##eliminamos las variables innecesarias
+GGG=GGG[,-c(2,4,6,8,10,12)]
+##colocamos la variable país como caracter
+GGG$Pais=as.character(GGG$Pais)
+str(GGG)
+##colocamos las variables como numéricas
+GGG[,c(2:6)]=lapply(GGG[,c(2:6)],as.numeric)
+GGG=na.omit(GGG)
+GGG$"ISO" = c("ISL", "NOR", "FIN", "SWE", "IRL", "RWA", "PHL", "CHE", "SVN", "NZL", "DEU", "NIC", "NLD", "DNK", "FRA", "NAM", "ZAF", "GBR", "BEL", "LVA", "EST", "BOL", "BDI", "BRB", "ESP", "MDA", "MOZ", "USA", "CUB", "CAN", "LTU", "LUX", "ECU", "BLR", "ARG", "AUS", "AUT", "CRI", "PRT", "BHS", "ITA", "COL", "BGR", "PAN", "SRB", "TTO", "KAZ", "KEN", "TZN", "CPV", "POL", "LAO", "ISR", "SGP", "BWA", "MNG", "ZWE", "UGA", "HRV", "THA", "LSO", "SLV", "GHA", "BGD", "JAM", "GUY", "UKR", "MWI", "MKD", "ALB", "MEX", "SEN", "CHL", "MDG", "RUS", "KGZ", "ROU", "VEN", "MNE", "HND", "CZE", "GEO", "VNM", "LKA", "BRA", "DOM", "GRC", "BRN", "PER", "CMR", "CHN", "IDN", "URY", "SUR", "TJK", "AZE", "SVK", "GMB", "HUN", "CYP", "JPN", "SWZ", "BLZ", "MLT", "ARM", "GTM", "PRY", "IND", "KHM", "NPL", "MYS", "LBR", "MDV", "BFA", "KOR", "ZMB", "KWT", "BTN", "ARE","MUS","FJI","QAT","BHR","ETH","NGA","AGO","TUN","DZA","BEN","TUR","GIN","MRT","CIV", "SAU", "OMN","EGY","MLI","LBN", "MAR","JOR","IRN","TCD","SYR","PAK","YEM")
+```
+
+
+#Limpieza de Indice de desarrollo humano-idh
+
+```{r}
+names(idh)=c("Puesto","Pais","PuntajeHDI","AñosVida","AñosEducacion","MedianaAñosEdu","PBI","PBImenosPuesto","Puesto2016")
+idh=idh[-c(1),]
+idh=idh[-c(60),]
+row.names(idh)=NULL
+idh=idh[-c(113,153,192:215),]
+idh$PBI =   gsub("\\,", "", idh$PBI)
+idh$PBImenosPuesto=NULL
+idh$Puesto2016=NULL
+idh$Puesto=NULL
+idh$PBI = as.numeric(idh$PBI)
+idh$MedianaAñosEdu = as.numeric(idh$MedianaAñosEdu)
+idh$AñosEducacion = as.numeric(idh$AñosEducacion)
+idh$AñosVida = as.numeric(idh$AñosVida)
+idh$PuntajeHDI = as.numeric(idh$PuntajeHDI)
+row.names(idh)=NULL
+idh=na.omit(idh)
+#colocamos codigo iso
+idh$ISO=c("CHE","AUS","IRL","DEU","ISL","HKG","SWE","SGP","NLD","DNK","CAN","USA","GBR","FIN","NZL","BEL","LIE","JPN","AUT","LUX","ISR","KOR","FRA","SVN","ESP","CZE","ITA","MLT","EST","GRC","CYP","POL","ARE","AND","LTU","QAT","SVK","BRN","SAU","LVA","PRT","BHR","CHL","HUN","HRV","ARG","OMN","RUS","MNE","BGR","ROU","BLR","BHS","URY","KWT","MYS","BRB","KAZ","PLW","SYC","CRI","TUR","MUS","PAN","SRB","ALB","TTO","ATG","GEO","KNA","CUB","MEX","GRD","LKA","BIH","VEN","BRA","AZE","LBN","YUG","ARM","THA","DZA","CHN","ECU","UKR","PER","COL","LCA","FJI","MNG","DOM","JOR","TUN","JAM","TON","VCT","SUR","BWA","MDV","DMA","WSM","UZB","BLZ","MHL","LBY","TKM","GAB","PRY","MDA","ZAF","EGY","IDN","VNM","BOL","PSE","IRQ","SLV","KGZ","MAR","NIC","CPV","GUY","GTM","TJK","NAM","IND","FSM","TLS","HND","BHU","KIR","BGD","COG","VUT","LAO","GHA","GNQ","KEN","STP","SWZ","ZMB","KHM","AGO","MMR","NPL","PAK","CMR","PNG","TZA","SYR","ZWE","NGA","RWA","LSO","MRT","MDG","UGA","BEN","SEN","COM","TGO","SDN","AFG","HTI","CIV","MWI","DJI","ETH","GMB","GIN","COD","GNB","YEM","ERI","MOZ","LBR","MLI","BFA","SLE","BDI","TCD","SSD","CAF","NER")
+```
+
+
+Limpieza de Educacion intermedia-DataEduInter
+```{r}
+#transformamos a numericos ciertas variables
+DataEduInter[,c(5:34)]=lapply(DataEduInter[,c(5:34)],as.numeric)
+#cambiamos el nombre de country name a pais
+names(DataEduInter)[1]= "Pais"
+#borramos columnasque no nos sirven 
+DataEduInter[,c(3:50)]= NULL
+DataEduInter[,(3:10)]= NULL
+DataEduInter[,c(3,4,6,7)]= NULL
+#limpiamos filas que no nos interesan como conjuntos de paises o algun otro parecido
+DataEduInter=DataEduInter[-c(6,35,48,60,61,62,63,64,67,72,73,94,97,101,102,103,104,106,107,109,127,133,134,135,138,139,141,152,155,160,169,180,182,190,196,197,203,214,217,229,230,235,237,239,240,248,254,255,258),]
+DataEduInter[1,3]=51.6
+DataEduInter[4,3]=60.1
+DataEduInter[3,3]=84.4
+DataEduInter[7,3]=75.0
+DataEduInter[8,3]=65.2
+DataEduInter[12,3]=76.1
+DataEduInter[15,3]=72.6
+DataEduInter[17,3]=45.1
+DataEduInter[18,3]=46
+DataEduInter[30,3]=67.7
+DataEduInter[31,3]=53.2
+DataEduInter[32,3]=62.5
+DataEduInter[31,3]=53.2
+DataEduInter[41,3]=56.7
+DataEduInter[31,3]=53.2
+DataEduInter[42,3]=58.1
+DataEduInter[46,3]=60.2
+DataEduInter[49,3]=70.4
+DataEduInter[51,3]=85.9
+DataEduInter[71,3]=81.2
+DataEduInter[78,3]=66.8
+DataEduInter[82,3]=69.4
+DataEduInter[85,3]=67.7
+DataEduInter[93,3]=66.9
+DataEduInter[108,3]=43.2
+DataEduInter[112,3]=58.1
+DataEduInter[121,3]=67
+DataEduInter[123,3]=45.6
+DataEduInter[128,3]=48
+DataEduInter[147,3]=47.3
+DataEduInter[150,3]=73.7
+DataEduInter[159,3]=70.4
+DataEduInter[164,3]=64.3
+DataEduInter[165,3]=38.5
+DataEduInter[172,3]=41.8
+DataEduInter[174,3]=67.3
+DataEduInter[177,3]=43.5
+DataEduInter[178,3]=73.8
+DataEduInter[179,3]=53.7
+DataEduInter[183,3]=47.3
+DataEduInter[187,3]=65.3
+DataEduInter[199,3]=83.9
+DataEduInter[202,3]=47.9
+DataEduInter[205,3]=41.8
+DataEduInter[206,3]=34.7
+DataEduInter[208,3]=91.7
+DataEduInter[209,3]=44.6
+DataEduInter[219,3]=72.2
+DataEduInter[231,3]=75.1
+DataEduInter[238,3]=52.8
+DataEduInter[245,3]=80.9
+DataEduInter[246,3]=62.9
+DataEduInter[253,3]=63.0
+DataEduInter[259,3]=46.4
+DataEduInter[261,3]=55.0
+DataEduInter[263,3]=44.4
+DataEduInter[264,3]=65.8
+row.names(DataEduInter)=NULL
+DataEduInter[180,3]=72.2
+DataEduInter[190,3]=75.1
+DataEduInter[195,3]=52.8
+DataEduInter[200,3]=80.9
+DataEduInter[201,3]=62.9
+DataEduInter[207,3]=63
+DataEduInter[210,3]=46.4
+DataEduInter[212,3]=55
+DataEduInter[214,3]=44.4
+DataEduInter[215,3]=65.8
+DataEduInter=DataEduInter[c(1:215),]
+DataEduInter=na.omit(DataEduInter)
+names(DataEduInter)[2]="ISO"
+```
+
+##LIMPIEZA DE DATOS URBANIZACION
+
+```{r}
+dataeco <- na.omit(dataeco)
+dataserv <- na.omit(dataserv)
+dataurb <- na.omit(dataurb)
+dataeco$Series.Name=NULL
+dataeco$Series.Code=NULL
+dataeco$Country.Name=NULL
+dataserv$Series.Name=NULL
+dataserv$Series.Code=NULL
+dataserv$Country.Name=NULL
+dataurb$Series.Name=NULL
+dataurb$Series.Code=NULL
+dataurb$Country.Name=NULL
+names (dataeco)[2] = "ECO16"
+names (dataserv)[2] = "SER16"
+names (dataurb)[2] = "URB16"
+names(dataeco)[1]="ISO"
+names(dataserv)[1]="ISO"
+names(dataurb)[1]="ISO"
+```
+
+#Creacion indice de Urbanizacion
+
+```{r}
+data1=merge(dataeco, dataserv, by.x = "ISO", by.y = "ISO")
+IND1=merge(data1, dataurb, by.x = "ISO", by.y =  "ISO")
+```
+
+#Analisis Factorial 
+```{r}
+Correla=IND1[,-c(1)]
+library(polycor)
+CorCor=polycor::hetcor(Correla)$correlations
+```
+
+```{r}
+str(IND1)
+```
+
+```{r}
+library(ggcorrplot)
+
+ggcorrplot(CorCor)
+```
+
+```{r}
+ggcorrplot(CorCor,
+          p.mat = cor_pmat(CorCor),
+          insig = "blank")
+```
+
+```{r}
+library(psych)
+psych::KMO(CorCor) 
+```
+
+```{r}
+cortest.bartlett(CorCor,n=nrow(Correla))$p.value>0.05
+```
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(CorCor)
+```
+
+```{r}
+fa.parallel(Correla,fm = 'ML', fa = 'fa')
+```
+
+```{r}
+library(GPArotation)
+luna <- fa(Correla,nfactors = 1,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+
+```{r}
+print(luna$loadings)
+```
+
+```{r}
+fa.diagram(luna)
+```
+
+```{r}
+luna$crms
+```
+
+```{r}
+luna$RMSEA
+```
+
+```{r}
+luna$TLI
+```
+
+```{r}
+sort(luna$communality)
+```
+
+```{r}
+str(IND1)
+```
+
+```{r}
+IND01=IND1[,2:4]/100
+```
+
+```{r}
+IND1$INDECO[IND01$ECO16<0.200]="1"
+IND1$INDECO[IND01$ECO16>=0.200 & IND01$ECO16<0.400]="2"
+IND1$INDECO[IND01$ECO16>=0.400 & IND01$ECO16<0.600]="3"
+IND1$INDECO[IND01$ECO16>=0.600 & IND01$ECO16<0.800]="4"
+IND1$INDECO[IND01$ECO16>=0.800]="5"
+```
+
+```{r}
+IND1$INDSER[IND01$SER16<0.200]="1"
+IND1$INDSER[IND01$SER16>=0.200 & IND01$SER16<0.400]="2"
+IND1$INDSER[IND01$SER16>=0.400 & IND01$SER16<0.600]="3"
+IND1$INDSER[IND01$SER16>=0.600 & IND01$SER16<0.800]="4"
+IND1$INDSER[IND01$SER16>=0.800]="5"
+```
+
+```{r}
+IND1$INDURB[IND01$URB16<0.200]="1"
+IND1$INDURB[IND01$URB16>=0.200 & IND01$URB16<0.400]="2"
+IND1$INDURB[IND01$URB16>=0.400 & IND01$URB16<0.600]="3"
+IND1$INDURB[IND01$URB16>=0.600 & IND01$URB16<0.800]="4"
+IND1$INDURB[IND01$URB16>=0.800]="5"
+```
+
+```{r}
+IND1[,5:7]=lapply(IND1[,5:7], as.numeric)
+```
+```{r}
+str(IND1)
+```
+
+```{r}
+IND1$sumaparcial = rowSums (IND1[ , 5:7])
+```
+
+```{r}
+IND1[,9]=IND1[,8]/3
+```
+
+```{r}
+MEPO=data.frame(IND1$ISO, IND1$V9)
+```
+
+```{r}
+names(MEPO)[1]= "ISO"
+names(MEPO)[2]= "INDMEP"
+```
+
+
+##MERGE 
+```{r}
+total1=merge(UHC,GGG, by.x = "ISO", by.y= "ISO")
+```
+```{r}
+total1$Pais.x=NULL
+total1$Pais.y=NULL
+```
+
+
+```{r}
+total2=merge(total1, GCR, by.x ="ISO", by.y ="ISO")
+```
+
+```{r}
+total3=merge(total2,idh, by.x="ISO", by.y="ISO")
+```
+
+```{r}
+total4=merge(total3,DataTICS2015, by.x="ISO", by.y="ISO")
+```
+
+```{r}
+total5=merge(total4, DataEduInter, by.x="ISO", by.y="ISO")
+```
+
+```{r}
+total5$Pais.x=NULL
+total5$Pais.y=NULL
+total5$Country=NULL
+```
+
+```{r}
+names(total5)[16]="PEA intermedia"
+```
+
+```{r}
+total6=merge(total5,dataeco,by.x = "ISO",by.y = "ISO")
+total7=merge(total6,dataserv, by.x="ISO", by.y="ISO")
+total8=merge(total7,dataurb,by.x="ISO", by.y="ISO")
+```
+
+```{r}
+row.names(total8)=total8$Pais
+total8$Pais=NULL
+```
+
+```{r}
+total9=merge(total8,MEPO, by.x="ISO", by.y="ISO")
+```
+
+##CLUSTERING
+
+```{r}
+library(stringr)
+library(magrittr)
+library(htmltab)
+library(factoextra)
+library(cluster)
+set.seed(2019)
+library(cluster)
+total9clust=total9[,-c(1,3,8,9,13,15,20)]
+g.dist9 = daisy(total9clust, metric="gower") #calculando la distancia
+```
+
+```{r}
+#particion
+fviz_nbclust(total9clust, pam,diss=g.dist9,method = "gap_stat",k.max = 10,verbose = F)
+```
+
+```{r}
+#jerarquizacion
+fviz_nbclust(total9clust, hcut,diss=g.dist9,method = "gap_stat",k.max = 10,verbose = F)
+```
+
+```{r}
+#la sugerencia es de 3 clusters
+res.pam9 = pam(g.dist9,3,cluster.only = F)
+res.agnes9 = hcut(g.dist9, k = 3,hc_func='agnes',hc_method = "ward.D")
+res.diana9 = hcut(g.dist9, k = 3,hc_func='diana')
+```
+
+```{r}
+fviz_silhouette(res.pam9)
+```
+
+```{r}
+fviz_silhouette(res.agnes9)
+```
+
+```{r}
+fviz_silhouette(res.diana9)
+```
+ Por teoría, escogemos la técnica de clusterizacion particionante 
+ 
+```{r}
+total9$clusterpar=res.pam9$cluster
+```
+ 
+```{r}
+fviz_cluster(object=list(data=g.dist9,cluster=total9$clusterpar),geom=c("text"), ellipse.type="convex")
+```
+ 
+```{r}
+library(rworldmap)
+library(maps)
+
+ddf = read.table(text="
+country COMPETITIVIDAD
+                AGO 10
+                BFA 10
+                BGD 10
+                CIV 10
+                GHA 10
+                GTM 10
+                KEN 10
+                KHM 10
+                MDG 10
+                MLI 10
+                NAM 10
+                PAK 10
+                UGA 10
+                YEM 10
+                ZMB 10
+                ZWE 10
+                ALB 50
+                ARM 50
+                BGR 50
+                BOL 50
+                BRA 50
+                BWA 50
+                COL 50
+                DOM 50
+                EGY 50
+                GEO 50
+                HND 50
+                HRV 50
+                HUN 50
+                IDN 50
+                LBN 50
+                LKA 50
+                MDA 50
+                MEX 50
+                MNE 50
+                MNG 50
+                MUS 50
+                MYS 50
+                PAN 50
+                PER 50
+                PRY 50
+                ROU 50
+                RUS 50
+                SLV 50
+                SRB 50
+                SVK 50
+                THA 50
+                TTO 50
+                TUR 50
+                UKR 50
+                VEN 50
+                VNM 50
+                ZAF 50
+                ARG 100
+                AUT 100
+                BEL 100
+                CAN 100
+                CHE 100
+                CHL 100
+                CRI 100
+                CYP 100
+                CZE 100
+                DEU 100
+                DNK 100
+                ESP 100
+                EST 100
+                FIN 100
+                FRA 100
+                GBR 100
+                GRC 100
+                IRL 100
+                ISL 100
+                ITA 100
+                JPN 100
+                LTU 100
+                LUX 100
+                LVA 100
+                MLT 100
+                NLD 100
+                POL 100
+                PRT 100
+                SAU 100
+                SVN 100
+                SWE 100
+                URY 100
+                USA 100
+                 ", header=T)
+
+spdf <- joinCountryData2Map(ddf, joinCode="NAME", nameJoinColumn="country")
+mapCountryData(spdf, nameColumnToPlot="COMPETITIVIDAD", catMethod="catMethod") #amarillo(bajo,1);naranja(medio,2),rojo(alto,3)
+```
+ 
+#ANALISIS FACTORIAL EXPLORATIVA
+
+#Analisis Fcatorial Explorativa sin los desagregados
+
+```{r}
+totalAF1=total9[,c(2,3,9,14,15,19)] #sin ISO ni Score GCR, ni desagregados
+library(polycor)
+corMatrix1=polycor::hetcor(totalAF1)$correlations
+library(ggcorrplot)
+ggcorrplot(corMatrix1)
+```
+
+```{r}
+library(psych)
+psych::KMO(corMatrix1) 
+```
+
+Segun el KMO es posible realizar un analisis factorial del indice GGG. 
+Para estar seguros, se harán dos pruebas, el de matriz de idnetidad y singular
+```{r}
+cortest.bartlett(corMatrix1,n=nrow(totalAF1))$p.value>0.05
+```
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corMatrix1)
+```
+
+```{r}
+fa.parallel(totalAF1,fm = 'ML', fa = 'fa') #para ver a cuantas variables latentes se debe llegar
+```
+
+```{r}
+library(GPArotation)
+resfa1=fa(totalAF1,nfactors = 1,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+
+```{r}
+print(resfa1$loadings)
+```
+
+```{r}
+fa.diagram(resfa1) #grafico de lo de arriba
+```
+
+
+```{r}
+resfa1$crms #ver la raiz error cuadrático medio corregida
+```
+
+```{r}
+resfa1$RMSEA #ver la raiz error cuacratico medio de aproximacion
+```
+
+```{r}
+resfa1$TLI #indice Tucker Lewis
+```
+
+```{r}
+sort(resfa1$communality) #que variables aportaron más al factor
+```
+
+```{r}
+sort(resfa1$complexity) #a cuantos factores aportan
+```
+
+```{r}
+sort(resfa1$uniquenesses)
+```
+
+#Analisis Factorial Explorativa con los desagregados
+
+```{r}
+totalAF2=total9[,-c(1,3,8,9,19,20)] # sin los Scores ni codigo iso
+
+library(polycor)
+corMatrix2=polycor::hetcor(totalAF2)$correlations
+```
+
+```{r}
+library(ggcorrplot)
+
+ggcorrplot(corMatrix2)
+```
+
+```{r}
+library(psych)
+psych::KMO(corMatrix2)
+```
+Segun el KMO, es posible realizar un analisis factorial 
+
+```{r}
+cortest.bartlett(corMatrix2,n=nrow(totalAF2))$p.value>0.05 #para ver si es una matriz de identidad o no
+```
+
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corMatrix2) #para ver si una matriz singular
+```
+
+```{r}
+fa.parallel(totalAF2,fm = 'ML', fa = 'fa')
+```
+Según el fa.parallel se nos recomienda 2 variables latentes
+
+```{r}
+library(GPArotation)
+resfa2=fa(totalAF2,nfactors =2,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+
+```{r}
+print(resfa2$loadings)
+```
+
+```{r}
+fa.diagram(resfa2)
+```
+
+```{r}
+resfa2$crms #ver la raiz error cuadrático medio corregida
+```
+Está cerca de cero
+
+```{r}
+resfa2$RMSEA #ver la raiz error cuacratico medio de aproximacion
+```
+Es mayor a 0.05
+```{r}
+resfa2$TLI #indice Tucker Lewis
+```
+Es mayor a 0.9
+
+```{r}
+sort(resfa2$communality) #que variables aportaron más al factor
+```
+
+```{r}
+sort(resfa2$complexity) #a cuantos factores aportan
+```
+
+```{r}
+sort(resfa2$uniquenesses)
+```
+
+#Analisis Factorial Confirmativa de GGG
+
+ 
+```{r}
+library(psych)
+GGG2=GGG[,-c(1,2,7)] # sin score ni nombre de país ni codigo iso
+
+library(GPArotation)
+resfa3=fa(GGG2,nfactors = 1,cor = 'mixed',rotate = "varimax",fm="minres")#pese a que no nos sugiere ninguna latente, se opta por ponerle 1
+```
+
+```{r}
+fa.diagram(resfa3) 
+```
+#Confirmando Modelo Teórico
+
+```{r}
+names(total9)
+```
+
+```{r}
+model2 <- ' ScoreGGG2  =~ participacioneconomicayoportunidades + educacion + saludysupervivencia + empoderamientopolitico'
+```
+
+
+```{r}
+library(lavaan)
+cfa_fit9 <- cfa(model2 , data = total8, 
+           std.lv=TRUE,  
+           missing="fiml")
+```
+
+```{r}
+allParamCFA9=parameterEstimates(cfa_fit9,standardized = T)
+allFitCFA9=as.list(fitMeasures(cfa_fit9))
+```
+
+```{r}
+library(knitr)
+kable(allParamCFA9[allParamCFA9$op=="=~",])
+```
+```{r}
+#ahora veremos el chi square
+allFitCFA9[c("chisq", "df", "pvalue")] # pvalue>0.05, 
+```
+Tucker Lewis
+```{r}
+allFitCFA9$tli # > 0.90
+```
+
+
+La Raíz del error cuadrático medio de aproximación es menor a 0.05?
+
+```{r}
+
+allFitCFA9[c('rmsea.ci.lower','rmsea' ,'rmsea.ci.upper')] # 0.05 en el Int de Conf?
+```
+```{r}
+#Añadimos los índices a la data de indicadores:
+
+total9=as.data.frame(cbind(total9,lavPredict(cfa_fit9)))
+```
+
+```{r}
+#vemos si el indice GGG se incluyó en la tabla
+summary(total9)
+```
+
+Agregaremos la nueva columna cuando hagamos la regresión para analizarla. 
+
+
+##REGRESION BETA
+
+```{r}
+total9$`Score GCR`=total9$`Score GCR`/100
+```
+
+```{r}
+names(total9)
+```
+Vamos a hacer una regresión beta con  las variables desagregadas 
+```{r}
+library(betareg)
+
+reg9Data=total9[,c(4,5,6,7,10,11,12,14,15,16,17,18)]
+modelBeta9=betareg(total9$`Score GCR`~.,data=reg9Data)
+summary(modelBeta9)
+```
+Ahora probaremos con solo los indices
+
+```{r}
+
+reg9Dataindi=total9[,c(2,3,9,14,15,16,17,18,21)]
+modelBeta9indi=betareg(total9$`Score GCR`~.,data=reg9Dataindi)
+summary(modelBeta9indi)
+
+```
+
+Ahoro solo los significativos 
+
+```{r}
+reg9DataTicsIDH=total9[,c(9,14)]
+modelBeta9TicsIDH=betareg(total9$`Score GCR`~.,data=reg9DataTicsIDH)
+summary(modelBeta9TicsIDH)
+```
+
+
+
