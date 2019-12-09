@@ -1,0 +1,97 @@
+```{r}
+library(rworldmap)
+library(maps)
+
+ddf = read.table(text="
+country COMPETITIVIDAD
+                AGO 10
+                BFA 10
+                BGD 10
+                CIV 10
+                GHA 10
+                GTM 10
+                KEN 10
+                KHM 10
+                MDG 10
+                MLI 10
+                NAM 10
+                PAK 10
+                UGA 10
+                YEM 10
+                ZMB 10
+                ZWE 10
+                ALB 50
+                ARM 50
+                BGR 50
+                BOL 50
+                BRA 50
+                BWA 50
+                COL 50
+                DOM 50
+                EGY 50
+                GEO 50
+                HND 50
+                HRV 50
+                HUN 50
+                IDN 50
+                LBN 50
+                LKA 50
+                MDA 50
+                MEX 50
+                MNE 50
+                MNG 50
+                MUS 50
+                MYS 50
+                PAN 50
+                PER 50
+                PRY 50
+                ROU 50
+                RUS 50
+                SLV 50
+                SRB 50
+                SVK 50
+                THA 50
+                TTO 50
+                TUR 50
+                UKR 50
+                VEN 50
+                VNM 50
+                ZAF 50
+                ARG 100
+                AUT 100
+                BEL 100
+                CAN 100
+                CHE 100
+                CHL 100
+                CRI 100
+                CYP 100
+                CZE 100
+                DEU 100
+                DNK 100
+                ESP 100
+                EST 100
+                FIN 100
+                FRA 100
+                GBR 100
+                GRC 100
+                IRL 100
+                ISL 100
+                ITA 100
+                JPN 100
+                LTU 100
+                LUX 100
+                LVA 100
+                MLT 100
+                NLD 100
+                POL 100
+                PRT 100
+                SAU 100
+                SVN 100
+                SWE 100
+                URY 100
+                USA 100
+                 ", header=T)
+
+spdf <- joinCountryData2Map(ddf, joinCode="NAME", nameJoinColumn="country")
+mapCountryData(spdf, nameColumnToPlot="COMPETITIVIDAD", catMethod="catMethod") 
+```
